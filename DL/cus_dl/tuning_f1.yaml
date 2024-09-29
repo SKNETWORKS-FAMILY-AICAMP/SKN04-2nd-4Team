@@ -22,15 +22,15 @@ search_space:
     _value: [0.1, 0.5]
 
 
-trial_command: python train.py
+trial_command: python train_f1.py
 trial_code_directory: .
 
-trial_concurrency: 3
-max_trial_number: 1000
+trial_concurrency: 2
+max_trial_number: 100
 tuner:
   name: TPE
   class_args:
     optimize_mode: maximize
 training_service:
   platform: local
-  use_active_gpu: false
+  debug: true

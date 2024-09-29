@@ -29,8 +29,8 @@ class XyModule(L.LightningModule):
         y = batch.get('y')  # 레이블 데이터를 가져옴
         
         output = self.model(X)  # 모델을 통해 예측값을 계산
-        output = torch.squeeze(output)
-        sig_out = F.sigmoid(output)
+        squeeze_output = torch.squeeze(output)
+        sig_out = F.sigmoid(squeeze_output)
         self.train_loss = F.binary_cross_entropy(sig_out, y)  
 
         y_pred = (sig_out >= 0.5).float()
@@ -43,7 +43,7 @@ class XyModule(L.LightningModule):
         # 학습 에포크가 끝날 때 호출되는 메서드
         self.log_dict(
             {'loss/train_loss': self.train_loss,
-             'acc/train_acc': self.train_acc},  # 학습 손실을 로그에 기록
+             'acc/train_acc': np.mean([acc.cpu().numpy() for acc in self.val_accs])},  # 학습 손실을 로그에 기록
             on_epoch=True,
             prog_bar=True,  # 진행 막대에 표시
             logger=True,    # 로그에 기록
@@ -57,29 +57,29 @@ class XyModule(L.LightningModule):
         y = batch.get('y')  # 레이블 데이터를 가져옴
 
         output = self.model(X)  # 모델을 통해 예측값을 계산
-        output = torch.squeeze(output)
-        sig_out = F.sigmoid(output)
-        self.val_loss = F.binary_cross_entropy(sig_out, y)  
+        squeeze_output = torch.squeeze(output)
+        sig_out = F.sigmoid(squeeze_output)
+        self.val_loss_ = F.binary_cross_entropy(sig_out, y)  
 
         y_pred = (sig_out >= 0.5).float()
         self.val_acc = (y_pred==y).float().mean()
         
         self.val_accs.append(self.val_acc)
         
-        return self.val_loss  # 검증 손실 반환
+        return self.val_loss_  # 검증 손실 반환
     
     def on_validation_epoch_end(self):
         # 검증 에포크가 끝날 때 호출되는 메서드
         self.log_dict(
-            {'loss/val_loss': self.val_loss,  # 검증 손실을 로그에 기록
-             'acc/val_acc':np.mean(self.val_accs),
+            {'loss/val_loss_': self.val_loss_,  # 검증 손실을 로그에 기록
+             'acc/val_acc':np.mean([acc.cpu().numpy() for acc in self.val_accs]),
              'learning_rate': self.optimizers().param_groups[0]['lr'] },  # 학습률도 로그에 기록 # type: ignore
             on_epoch=True,
             prog_bar=True,  # 진행 막대에 표시
             logger=True,    # 로그에 기록
         )
         if self.configs.get('nni'):
-            nni.report_intermediate_result(np.mean(self.val_accs)) # type: ignore
+            nni.report_intermediate_result(np.mean([acc.cpu().numpy() for acc in self.val_accs])) # type: ignore
 
     def test_step(self, batch, batch_idx):
         if batch_idx == 0:
@@ -89,19 +89,19 @@ class XyModule(L.LightningModule):
         y = batch.get('y')  # 레이블 데이터를 가져옴
         #y = y.squeeze()  # 레이블의 차원을 축소 (일부 상황에서 필요)
         output = self.model(X)  # 모델을 통해 예측값을 계산
-        output = torch.squeeze(output)
-        sig_out = F.sigmoid(output)
-        self.test_loss = F.binary_cross_entropy(sig_out, y)  
+        squeeze_output = torch.squeeze(output)
+        sig_out = F.sigmoid(squeeze_output)
+        self.test_loss_ = F.binary_cross_entropy(sig_out, y)  
 
         y_pred = (sig_out >= 0.5).float()
         self.test_acc = (y_pred==y).float().mean()
         
         self.test_accs.append(self.test_acc)        
-        return self.test_loss
+        return self.test_loss_
     
     def on_test_epoch_end(self):
         if self.configs.get('nni'):
-            nni.report_final_result(np.mean(self.test_accs)) # type: ignore
+            nni.report_final_result(np.mean([acc.cpu().numpy() for acc in self.test_accs])) # type: ignore
 
     def configure_optimizers(self):
         # 옵티마이저와 스케줄러를 설정하는 메서드
@@ -120,7 +120,7 @@ class XyModule(L.LightningModule):
             'optimizer': optimizer,   # 옵티마이저 반환
             'lr_scheduler': {
                 'scheduler': scheduler,
-                'monitor': 'loss/val_loss',  # 검증 손실을 기준으로 스케줄러 작동
+                'monitor': 'val_loss',  # 검증 손실을 기준으로 스케줄러 작동
                 'interval': 'epoch',
                 'frequency': 1,
             }

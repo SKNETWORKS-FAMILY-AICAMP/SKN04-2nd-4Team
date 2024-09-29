@@ -1,7 +1,7 @@
 from src.data import XyDataset, XyDataModule
 from src.utils import convert_category_into_integer
-from src.model.cus_mlp import Model
-from src.training_copy import XyModule
+from src.model.churn_mlp_4layer import Model
+from src.training_f1 import XyModule
 from imblearn.over_sampling import SMOTE
 
 import pandas as pd
@@ -43,14 +43,14 @@ def main(configs):
     drop_data = convert_data.dropna()
     
     x_data = drop_data.drop(columns=['Churn'])
-    y_data = drop_data.Churn
+    y_data = drop_data.Churn.astype(int)
     
     # 데이터셋을 학습용과 임시 데이터로 분할
     train_x, temp_x, train_y, temp_y = train_test_split(
         x_data, y_data,
         test_size=0.4,
         random_state=seed,
-        shuffle=False,
+        stratify=y_data  # y가 적절히 분포되도록
     )
 
     # 임시 데이터를 검증용과 테스트용 데이터로 분할
@@ -58,11 +58,10 @@ def main(configs):
         temp_x, temp_y,
         test_size=0.5,
         random_state=seed,
-        shuffle=False,
+        stratify=temp_y  # y가 적절히 분포되도록
     )
-
     # SMOTE를 학습 데이터에만 적용
-    smote = SMOTE(random_state=seed)
+    smote = SMOTE(random_state=configs.get('seed'))
     train_x_resampled, train_y_resampled = smote.fit_resample(train_x, train_y)
 
     standard_scaler = StandardScaler()
@@ -98,9 +97,10 @@ def main(configs):
     trainer_args = {
         'max_epochs': configs.get('epochs'),
         'callbacks': [
-            EarlyStopping(monitor='loss/val_loss', mode='min', patience=10)
-            # EarlyStopping(monitor='val_loss', mode='min', patience=10)
+            # EarlyStopping(monitor='loss/val_loss', mode='min', patience=10)
+            EarlyStopping(monitor='val_loss', mode='min', patience=10)
         ],
+
         'logger': TensorBoardLogger(
             'tensorboard',
             f'customer/{exp_name}',
@@ -127,22 +127,9 @@ if __name__ == '__main__':
     device = 'gpu' if torch.cuda.is_available() else 'cpu'
 
     # hyperparameter
-    with open('./configs.json', 'r') as file:
+    with open('./configs_f1.json', 'r') as file:
         configs = json.load(file)
     configs.update({'device': device})
-
-    # if configs.get('nni'):
-    #     nni_params = nni.get_next_parameters()
-    #     batch_size = nni_params.update({'batch_size': configs.get('batch_size')})
-    #     hidden_dim1 = nni_params.update({'hidden_dim1': configs.get('hidden_dim1')})
-    #     hidden_dim2 = nni_params.update({'hidden_dim2': configs.get('hidden_dim2')})
-    #     learning_rate = nni_params.update({'learning_rate': configs.get('learning_rate')})
-    #     dropout_ratio = nni_params.update({'dropout_ratio': configs.get('dropout_ratio')})
-    #     configs.update(nni_params)
-
-    # if configs.get('nni'):
-    #     nni_params = nni.get_next_parameters()
-    #     configs.update(nni_params)
 
     if configs.get('nni'):
         nni_params = nni.get_next_parameters()

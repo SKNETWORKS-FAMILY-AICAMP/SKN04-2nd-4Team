@@ -20,7 +20,7 @@ class XyDataset(Dataset):
         
         # PyTorch 텐서 변환
         X = torch.from_numpy(self.X[idx]).float()
-        
+
         # 'tip' 열의 값을 텐서로 변환하여 target 생성
         # y = torch.Tensor(self.y[idx]).float()
         y = torch.tensor(self.y.values[idx], dtype=torch.float32)
