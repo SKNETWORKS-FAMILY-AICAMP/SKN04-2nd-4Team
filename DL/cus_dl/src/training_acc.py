@@ -39,24 +39,24 @@ class XyModule(L.LightningModule):
         y_pred = (sig_out >= 0.5).float()
         self.train_acc = (y_pred==y).float().mean()
         self.train_f1 = f1_score(y.cpu().numpy(), y_pred.cpu().numpy(), average='binary')
-
-        return self.train_loss
-
-    def on_train_epoch_end(self, *args, **kwargs):
         self.log_dict(
             {
                 'train_loss': self.train_loss,
                 'train_acc': self.train_acc,
                 'train_f1': self.train_f1
             }, # type: ignore
+            on_step=True,
             on_epoch=True,  # 에폭마다 기록
             prog_bar=True,  # 프로그레스 바에 표시
             logger=True     # 로그 파일에도 기록
         )
+        return self.train_loss
 
+    def on_train_epoch_end(self, *args, **kwargs):
+        pass
     
     def validation_step(self, batch, batch_idx):
-
+        
         X = batch.get('X')  # 입력 데이터를 가져옴
         y = batch.get('y')  # 레이블 데이터를 가져옴
 
@@ -69,20 +69,21 @@ class XyModule(L.LightningModule):
         y_pred = (sig_out >= 0.5).float()
         self.val_acc = (y_pred==y).float().mean()
         self.val_f1 = f1_score(y.cpu().numpy(), y_pred.cpu().numpy(), average='binary')
-
-        return {'val_loss': self.val_loss, 'val_acc': self.val_acc, 'val_f1': self.val_f1}
-
-    def on_validation_epoch_end(self):
+        
         self.log_dict(
             {
                 'val_loss': self.val_loss,
                 'val_acc': self.val_acc,
                 'val_f1': self.val_f1
             }, # type: ignore
+            on_step=True,
             on_epoch=True,  # 에폭마다 기록
             prog_bar=True,  # 프로그레스 바에 표시
             logger=True     # 로그 파일에도 기록
-        )
+            )
+        return self.val_loss
+
+    def on_validation_epoch_end(self):
         nni.report_intermediate_result(self.val_acc) 
         
     def test_step(self, batch, batch_idx):
@@ -99,20 +100,20 @@ class XyModule(L.LightningModule):
         y_pred = (sig_out >= 0.5).float()
         self.test_acc = (y_pred==y).float().mean()
         self.test_f1 = f1_score(y.cpu().numpy(), y_pred.cpu().numpy(), average='binary')
-
-        return {'test_loss': self.test_loss, 'test_acc': self.test_acc, 'test_f1': self.test_f1}
-    
-    def on_test_epoch_end(self):
         self.log_dict(
             {
                 'test_loss': self.test_loss,
                 'test_acc': self.test_acc,
                 'test_f1': self.test_f1
             }, # type: ignore
+            on_step=True,
             on_epoch=True,  # 에폭마다 기록
             prog_bar=True,  # 프로그레스 바에 표시
             logger=True     # 로그 파일에도 기록
         )
+        return self.test_loss
+    
+    def on_test_epoch_end(self):
         if self.configs.get('nni'):
             nni.report_final_result(self.test_acc)
 

@@ -163,13 +163,15 @@ def preprocessing(df: pd.DataFrame):
 #     return data_pca_merged, positive_correlated_groups, negative_correlated_groups
 
 # 학습 데이터와 테스트 데이터에 동일한 PCA 변환을 적용하는 함수
-def pca_merge_correlated_columns(X_train, X_test, positive_threshold=0.9, negative_threshold=-0.9):
+def pca_merge_correlated_columns(X_train, X_test, positive_threshold=0.9):
+    # , negative_threshold=-0.9
     # 상관계수 행렬 계산 (컬럼 간 상관관계)
-    corr_matrix = X_train.corr()
-
-    # 양의 상관관계 그룹과 음의 상관관계 그룹을 저장할 리스트
+    if 'Churn' in X_train.columns:
+        corr_matrix = X_train.drop(columns=['Churn']).corr()
+    else:
+        corr_matrix = X_train.corr()
+        
     positive_correlated_groups = []
-    negative_correlated_groups = []
 
     # 이미 병합된 피처들을 추적하기 위한 세트
     used_columns = set()
@@ -180,19 +182,10 @@ def pca_merge_correlated_columns(X_train, X_test, positive_threshold=0.9, negati
             high_positive_corr_cols = corr_matrix.columns[corr_matrix.iloc[i] >= positive_threshold].tolist()
             high_positive_corr_cols = [col for col in high_positive_corr_cols if col not in used_columns]
 
-            # i번째 컬럼과 상관계수가 negative_threshold 이하인 피처 그룹 추출 (음의 상관관계)
-            high_negative_corr_cols = corr_matrix.columns[corr_matrix.iloc[i] <= negative_threshold].tolist()
-            high_negative_corr_cols = [col for col in high_negative_corr_cols if col not in used_columns]
-
             # 양의 상관관계 그룹 추가
             if len(high_positive_corr_cols) > 1:
                 positive_correlated_groups.append(high_positive_corr_cols)
                 used_columns.update(high_positive_corr_cols)
-
-            # 음의 상관관계 그룹 추가
-            if len(high_negative_corr_cols) > 1:
-                negative_correlated_groups.append(high_negative_corr_cols)
-                used_columns.update(high_negative_corr_cols)
 
     # PCA 적용 및 변환
     X_train_pca = X_train.copy()
@@ -207,14 +200,60 @@ def pca_merge_correlated_columns(X_train, X_test, positive_threshold=0.9, negati
         X_train_pca.drop(columns=group, inplace=True)
         X_test_pca.drop(columns=group, inplace=True)
         pca_models[f'{"_".join(group)}_pca_pos'] = pca
-
-    # 음의 상관관계 그룹에 대해 PCA 적용
-    for group in negative_correlated_groups:
-        pca = PCA(n_components=1)
-        X_train_pca[f'{"_".join(group)}_pca_neg'] = pca.fit_transform(X_train[group])
-        X_test_pca[f'{"_".join(group)}_pca_neg'] = pca.transform(X_test[group])
-        X_train_pca.drop(columns=group, inplace=True)
-        X_test_pca.drop(columns=group, inplace=True)
-        pca_models[f'{"_".join(group)}_pca_neg'] = pca
-
     return X_train_pca, X_test_pca
+    # 양의 상관관계 그룹을 저장할 리스트
+
+
+
+
+
+
+#  # 양의 상관관계 그룹과 음의 상관관계 그룹을 저장할 리스트
+#     positive_correlated_groups = []
+#     negative_correlated_groups = []
+
+#     # 이미 병합된 피처들을 추적하기 위한 세트
+#     used_columns = set()
+
+#     for i in range(len(corr_matrix.columns)):
+#         if corr_matrix.columns[i] not in used_columns:
+#             # i번째 컬럼과 상관계수가 positive_threshold 이상인 피처 그룹 추출 (양의 상관관계)
+#             high_positive_corr_cols = corr_matrix.columns[corr_matrix.iloc[i] >= positive_threshold].tolist()
+#             high_positive_corr_cols = [col for col in high_positive_corr_cols if col not in used_columns]
+
+#             # i번째 컬럼과 상관계수가 negative_threshold 이하인 피처 그룹 추출 (음의 상관관계)
+#             high_negative_corr_cols = corr_matrix.columns[corr_matrix.iloc[i] <= negative_threshold].tolist()
+#             high_negative_corr_cols = [col for col in high_negative_corr_cols if col not in used_columns]
+
+#             # 양의 상관관계 그룹 추가
+#             if len(high_positive_corr_cols) > 1:
+#                 positive_correlated_groups.append(high_positive_corr_cols)
+#                 used_columns.update(high_positive_corr_cols)
+
+#             # 음의 상관관계 그룹 추가
+#             if len(high_negative_corr_cols) > 1:
+#                 negative_correlated_groups.append(high_negative_corr_cols)
+#                 used_columns.update(high_negative_corr_cols)
+
+#     # PCA 적용 및 변환
+#     X_train_pca = X_train.copy()
+#     X_test_pca = X_test.copy()
+#     pca_models = {}
+
+#     # 양의 상관관계 그룹에 대해 PCA 적용
+#     for group in positive_correlated_groups:
+#         pca = PCA(n_components=1)
+#         X_train_pca[f'{"_".join(group)}_pca_pos'] = pca.fit_transform(X_train[group])
+#         X_test_pca[f'{"_".join(group)}_pca_pos'] = pca.transform(X_test[group])  # 동일한 PCA 변환을 테스트 데이터에도 적용
+#         X_train_pca.drop(columns=group, inplace=True)
+#         X_test_pca.drop(columns=group, inplace=True)
+#         pca_models[f'{"_".join(group)}_pca_pos'] = pca
+
+#     # 음의 상관관계 그룹에 대해 PCA 적용
+#     for group in negative_correlated_groups:
+#         pca = PCA(n_components=1)
+#         X_train_pca[f'{"_".join(group)}_pca_neg'] = pca.fit_transform(X_train[group])
+#         X_test_pca[f'{"_".join(group)}_pca_neg'] = pca.transform(X_test[group])
+#         X_train_pca.drop(columns=group, inplace=True)
+#         X_test_pca.drop(columns=group, inplace=True)
+#         pca_models[f'{"_".join(group)}_pca_neg'] = pca
