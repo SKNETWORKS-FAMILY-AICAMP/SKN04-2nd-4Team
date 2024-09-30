@@ -223,25 +223,7 @@ CatBoost 모델에서는 `MonthsInService`가 가장 중요한 변수로 나타�
 ## **사용된 DL**
 
 ### **MLP**
-
-- DL 설정
-    
-    ```bash
-    {
-        "learning_rate": 5e-3,
-        "dropout_ratio": 0.1,
-        "hidden_dim1": 128,
-        "hidden_dim2": 128,
-        "hidden_dim3": 128,
-        "hidden_dim4": 128,
-        "batch_size": 128,  
-        "output_dim": 1,
-        "nni": false,
-        "seed": 0,  
-        "epochs": 100,
-        "use_batch_norm": true
-    }
-    ```
+ -4-hidden-layer
     
 
 # **결론**
