@@ -40,6 +40,7 @@ def main(configs):
     )
     data = data.drop(columns=['Unnamed: 0', 'CustomerID',])
     object_columns = data.select_dtypes(include=['object'])
+    
     convert_data, _ = convert_category_into_integer(data, object_columns)
     drop_data = convert_data.dropna()
     

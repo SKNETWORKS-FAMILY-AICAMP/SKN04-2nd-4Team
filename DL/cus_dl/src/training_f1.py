@@ -34,7 +34,7 @@ class XyModule(L.LightningModule):
         
         # self.train_loss = F.binary_cross_entropy(sig_out, y)  
 
-        self.train_loss = F.binary_cross_entropy_with_logits(squeeze_output, y, pos_weight=self.pos_weight)
+        self.train_loss = F.binary_cross_entropy_with_logits(squeeze_output, y)
         sig_out = F.sigmoid(squeeze_output)
         y_pred = (sig_out >= 0.5).float()
         self.train_acc = (y_pred==y).float().mean()
@@ -64,7 +64,7 @@ class XyModule(L.LightningModule):
         squeeze_output = torch.flatten(output)
         
         # self.val_loss = F.binary_cross_entropy(sig_out, y)  
-        self.val_loss = F.binary_cross_entropy_with_logits(squeeze_output, y, pos_weight=self.pos_weight)
+        self.val_loss = F.binary_cross_entropy_with_logits(squeeze_output, y)
         sig_out = F.sigmoid(squeeze_output)
         y_pred = (sig_out >= 0.5).float()
         self.val_acc = (y_pred==y).float().mean()
@@ -94,7 +94,7 @@ class XyModule(L.LightningModule):
         squeeze_output = torch.flatten(output)
         
         # self.test_loss = F.binary_cross_entropy(sig_out, y)  
-        self.test_loss = F.binary_cross_entropy_with_logits(squeeze_output, y, pos_weight=self.pos_weight)
+        self.test_loss = F.binary_cross_entropy_with_logits(squeeze_output, y)
         sig_out = F.sigmoid(squeeze_output)
         y_pred = (sig_out >= 0.5).float()
         self.test_acc = (y_pred==y).float().mean()
