@@ -50,7 +50,7 @@
     2. HandsetWebCapable: 웹 기능 탑재 여부
     3. HandsetModels: 핸드셋 모델
         
-        ![2. 서비스 관련 변수.png](2._./image/%25EC%2584%259C%25EB%25B9%2584%25EC%258A%25A4_%25EA%25B4%2580%25EB%25A0%25A8_%25EB%25B3%2580%25EC%2588%2598.png)
+        ![2. 서비스 관련 변수.png](./image/%25EC%2584%259C%25EB%25B9%2584%25EC%258A%25A4_%25EA%25B4%2580%25EB%25A0%25A8_%25EB%25B3%2580%25EC%2588%2598.png)
         
 
 1. 사용량 관련 변수
@@ -59,7 +59,7 @@
     3. TruckOwner: 트럭 소유 여부
     4. RVOwner: RV 소유 여부
         
-        ![3. 사용량 관련 변수.png](3._./image/%25EC%2582%25AC%25EC%259A%25A9%25EB%259F%2589_%25EA%25B4%2580%25EB%25A0%25A8_%25EB%25B3%2580%25EC%2588%2598.png)
+        ![3. 사용량 관련 변수.png](./image/%25EC%2582%25AC%25EC%259A%25A9%25EB%259F%2589_%25EA%25B4%2580%25EB%25A0%25A8_%25EB%25B3%2580%25EC%2588%2598.png)
         
     
 2. 마케팅 및 반응 관련 변수
@@ -68,7 +68,7 @@
     3. OptOutMailings: 우편 발송 제외 여부
     4. MadeCallToRetentionTeam: 유지팀에 전화한 적 여부
         
-        ![4. 마케팅 및 반응 관련 변수.png](4._./image/%25EB%25A7%2588%25EC%25BC%2580%25ED%258C%2585_%25EB%25B0%258F_%25EB%25B0%2598%25EC%259D%2591_%25EA%25B4%2580%25EB%25A0%25A8_%25EB%25B3%2580%25EC%2588%2598.png)
+        ![4. 마케팅 및 반응 관련 변수.png](./image/%25EB%25A7%2588%25EC%25BC%2580%25ED%258C%2585_%25EB%25B0%258F_%25EB%25B0%2598%25EC%259D%2591_%25EA%25B4%2580%25EB%25A0%25A8_%25EB%25B3%2580%25EC%2588%2598.png)
         
     
 
@@ -76,11 +76,11 @@
 
 - Target(Churn)에 따른 수치형으로 변수 분포
     
-    ![5. 숫자형 변수 차이 시각화(1).png](5._./image/%25EC%2588%25AB%25EC%259E%2590%25ED%2598%2595_%25EB%25B3%2580%25EC%2588%2598_%25EC%25B0%25A8%25EC%259D%25B4_%25EC%258B%259C%25EA%25B0%2581%25ED%2599%2594(1).png)
+    ![5. 숫자형 변수 차이 시각화(1).png](./image/%25EC%2588%25AB%25EC%259E%2590%25ED%2598%2595_%25EB%25B3%2580%25EC%2588%2598_%25EC%25B0%25A8%25EC%259D%25B4_%25EC%258B%259C%25EA%25B0%2581%25ED%2599%2594(1).png)
     
 - Target(Churn)에 따른 이진 분류된 변수 분포
     
-    ![6. 숫자형 변수 차이 시각화(2).png](6._./image/%25EC%2588%25AB%25EC%259E%2590%25ED%2598%2595_%25EB%25B3%2580%25EC%2588%2598_%25EC%25B0%25A8%25EC%259D%25B4_%25EC%258B%259C%25EA%25B0%2581%25ED%2599%2594(2).png)
+    ![6. 숫자형 변수 차이 시각화(2).png](./image/%25EC%2588%25AB%25EC%259E%2590%25ED%2598%2595_%25EB%25B3%2580%25EC%2588%2598_%25EC%25B0%25A8%25EC%259D%25B4_%25EC%258B%259C%25EA%25B0%2581%25ED%2599%2594(2).png)
     
 
 # Machine Learning
@@ -121,7 +121,7 @@
 
 ### 2. Random Forest Model
 
-![8. 변수 중요도(rf)_절삭.png](8._./image/%25EB%25B3%2580%25EC%2588%2598_%25EC%25A4%2591%25EC%259A%2594%25EB%258F%2584(rf)_%25EC%25A0%2588%25EC%2582%25AD.png)
+![8. 변수 중요도(rf)_절삭.png](./image/%25EB%25B3%2580%25EC%2588%2598_%25EC%25A4%2591%25EC%259A%2594%25EB%258F%2584(rf)_%25EC%25A0%2588%25EC%2582%25AD.png)
 
 - `CurrentEquipmentDays`: 6.33%
 - `PercChangeMinutes`: 5.13%
@@ -132,7 +132,7 @@ Random Forest 모델에서는 `CurrentEquipmentDays`, `PercChangeMinutes`, `Mont
 
 ### 3. XGBoost Model
 
-![9. 변수 중요도(xg)_절삭.png](9._./image/%25EB%25B3%2580%25EC%2588%2598_%25EC%25A4%2591%25EC%259A%2594%25EB%258F%2584(xg)_%25EC%25A0%2588%25EC%2582%25AD.png)
+![9. 변수 중요도(xg)_절삭.png](./image/%25EB%25B3%2580%25EC%2588%2598_%25EC%25A4%2591%25EC%259A%2594%25EB%258F%2584(xg)_%25EC%25A0%2588%25EC%2582%25AD.png)
 
 - `CurrentEquipmentDays`: 5.26%
 - `MonthsInService`: 4.39%
@@ -143,7 +143,7 @@ XGBoost 모델에서는 `CurrentEquipmentDays`와 `MonthsInService`가 여전히
 
 ### 4. LightGBM Model
 
-![10. 변수 중요도(lgbm)_절삭.png](10._./image/%25EB%25B3%2580%25EC%2588%2598_%25EC%25A4%2591%25EC%259A%2594%25EB%258F%2584(lgbm)_%25EC%25A0%2588%25EC%2582%25AD.png)
+![10. 변수 중요도(lgbm)_절삭.png](./image/%25EB%25B3%2580%25EC%2588%2598_%25EC%25A4%2591%25EC%259A%2594%25EB%258F%2584(lgbm)_%25EC%25A0%2588%25EC%2582%25AD.png)
 
 - `PercChangeMinutes`: 483
 - `MonthlyMinutes`: 432
@@ -156,7 +156,7 @@ XGBoost 모델에서는 `CurrentEquipmentDays`와 `MonthsInService`가 여전히
 
 ### 5. **CatBoost Model**
 
-![11. 변수 중요도(cat)_절삭.png](11._./image/%25EB%25B3%2580%25EC%2588%2598_%25EC%25A4%2591%25EC%259A%2594%25EB%258F%2584(cat)_%25EC%25A0%2588%25EC%2582%25AD.png)
+![11. 변수 중요도(cat)_절삭.png](./image/%25EB%25B3%2580%25EC%2588%2598_%25EC%25A4%2591%25EC%259A%2594%25EB%258F%2584(cat)_%25EC%25A0%2588%25EC%2582%25AD.png)
 
 - `MonthsInService`: 10.32%
 - `CurrentEquipmentDays`: 8.01%
