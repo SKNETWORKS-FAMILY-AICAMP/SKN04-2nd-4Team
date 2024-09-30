@@ -30,7 +30,7 @@
 
 **1. 고객이탈 비율**
 
-![./image/1baf3a73-235d-4b06-b560-5b4319b9e08c.png](1baf3a73-235d-4b06-b560-5b4319b9e08c.png)
+![./image/1baf3a73-235d-4b06-b560-5b4319b9e08c.png](./image/1baf3a73-235d-4b06-b560-5b4319b9e08c.png)
 
  
 
