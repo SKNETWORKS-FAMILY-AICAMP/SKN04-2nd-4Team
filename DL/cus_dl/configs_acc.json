@@ -7,7 +7,7 @@
     "hidden_dim4": 128,
     "batch_size": 128,  
     "output_dim": 1,
-    "nni": false,
+    "nni": true,
     "seed": 0,  
     "epochs": 100,
     "use_batch_norm": true

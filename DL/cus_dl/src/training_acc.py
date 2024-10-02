@@ -23,6 +23,11 @@ class XyModule(L.LightningModule):
             # self.pos_weight= torch.tensor(1)
         else:
             self.pos_weight=self.configs.get('class_weights')
+
+        self.train_accs = []
+        self.val_accs = []  
+        self.test_accs = [] 
+
     def training_step(self, batch, batch_idx):
         # 학습 단계에서 호출되는 메서드
         
@@ -56,7 +61,8 @@ class XyModule(L.LightningModule):
         pass
     
     def validation_step(self, batch, batch_idx):
-        
+        if batch_idx == 0:
+            self.val_accs.clear()
         X = batch.get('X')  # 입력 데이터를 가져옴
         y = batch.get('y')  # 레이블 데이터를 가져옴
 
@@ -69,7 +75,8 @@ class XyModule(L.LightningModule):
         y_pred = (sig_out >= 0.5).float()
         self.val_acc = (y_pred==y).float().mean()
         self.val_f1 = f1_score(y.cpu().numpy(), y_pred.cpu().numpy(), average='binary')
-        
+        self.val_accs.append(self.val_acc.detach().item())
+
         self.log_dict(
             {
                 'val_loss': self.val_loss,
@@ -84,9 +91,12 @@ class XyModule(L.LightningModule):
         return self.val_loss
 
     def on_validation_epoch_end(self):
-        nni.report_intermediate_result(self.val_acc) 
+        if self.configs.get('nni'):
+            nni.report_intermediate_result(np.mean(self.val_accs))
         
     def test_step(self, batch, batch_idx):
+        if batch_idx == 0:
+            self.test_accs.clear()
         # 테스트 단계에서 호출되는 메서드
         X = batch.get('X')  # 입력 데이터를 가져옴
         y = batch.get('y')  # 레이블 데이터를 가져옴
@@ -100,6 +110,8 @@ class XyModule(L.LightningModule):
         y_pred = (sig_out >= 0.5).float()
         self.test_acc = (y_pred==y).float().mean()
         self.test_f1 = f1_score(y.cpu().numpy(), y_pred.cpu().numpy(), average='binary')
+        self.test_accs.append(self.test_acc.detach().item())
+
         self.log_dict(
             {
                 'test_loss': self.test_loss,
@@ -115,8 +127,7 @@ class XyModule(L.LightningModule):
     
     def on_test_epoch_end(self):
         if self.configs.get('nni'):
-            nni.report_final_result(self.test_acc)
-
+            nni.report_final_result(np.mean(self.test_accs))
 
 
     def configure_optimizers(self):
