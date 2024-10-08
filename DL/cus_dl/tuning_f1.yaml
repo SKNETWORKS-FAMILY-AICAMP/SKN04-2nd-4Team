@@ -1,0 +1,36 @@
+search_space:
+  batch_size:
+    _type: choice
+    _value: [32, 64, 128, 512, 1024]
+  hidden_dim1:
+    _type: randint
+    _value: [16, 512]
+  hidden_dim2:
+    _type: randint
+    _value: [16, 512]
+  hidden_dim3:
+    _type: randint
+    _value: [16, 512]
+  hidden_dim4:
+    _type: randint
+    _value: [16, 512]
+  learning_rate:
+    _type: uniform
+    _value: [0.0001, 0.01]
+  dropout_ratio:
+    _type: uniform
+    _value: [0.1, 0.5]
+
+
+trial_command: python train_f1.py
+trial_code_directory: .
+
+trial_concurrency: 2
+max_trial_number: 100
+tuner:
+  name: TPE
+  class_args:
+    optimize_mode: maximize
+training_service:
+  platform: local
+  debug: true

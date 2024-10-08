@@ -1,0 +1,14 @@
+{
+    "learning_rate": 0.007421273794972731,
+    "dropout_ratio": 0.23080408336703992,
+    "hidden_dim1": 500,
+    "hidden_dim2": 479,
+    "hidden_dim3": 33,
+    "hidden_dim4": 425,
+    "batch_size": 128,  
+    "output_dim": 1,
+    "nni": false,
+    "seed": 0,  
+    "epochs": 100,
+    "use_batch_norm": true
+}
